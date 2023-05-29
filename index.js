@@ -18,9 +18,11 @@ app.options('*', cors());
 const port = 8080;
 
 app.get('/', (req, res, next) => {
-  res.send('kafka api - adsoft');
+  res.send('kafka api - BryanVRe');
 });
 
+
+// topic username username=name
 const run = async (username) => {
 
     await producer.connect()
@@ -42,6 +44,56 @@ app.get('/like', (req, res, next) => {
   run(username).catch(e => console.error(`[example/producer] ${e.message}`, e))
 
 });
+//node - topic reaction - uId=userId, oId=objectId, rId=reactionId
+const ruun = async (uId, oId, rId) => {
+
+  await producer.connect()
+//    await producer.send()
+  await producer.send({
+    topic: 'reactions',
+    messages: [ 
+{ 
+  'value': `{ "userId": "${uId}",  "objectId": "${oId}", "reactionId": "${rId}"}` 
+  } 
+    ],
+  })
+ await producer.disconnect()
+}
+
+app.get('/reaction', (req, res, next) => {
+const uId = req.query.userId;
+const oId = req.query.objectId;
+const rId = req.query.reactionId;
+res.send({'userId:': uId, 'objectId': oId,'reactionId' : rId } );
+ruun(uId, oId, rId).catch(e => console.error(`[example/producer] ${e.message}`, e))
+
+});
+
+//node - topic comments    uId=userId, oId=objectId, sms=message
+const r = async (uId, oId, sms) => {
+
+  await producer.connect()
+//    await producer.send()
+  await producer.send({
+    topic: 'comments',
+    messages: [ 
+  { 
+    'value': `{ "userId": "${uId}",  "objectId": "${oId}", "message": "${sms}"}`
+  } 
+    ],
+  })
+ await producer.disconnect()
+}
+
+app.get('/comments', (req, res, next) => {
+const uId = req.query.userId;
+const oId = req.query.objectId;
+const sms = req.query.message;
+res.send({'userId:': uId, 'objectId': oId,'message' : sms} );
+r(uId, oId, sms).catch(e => console.error(`[example/producer] ${e.message}`, e))
+
+});
+
 
 app.listen(port,  () => 
 	console.log('listening on port ' + port
