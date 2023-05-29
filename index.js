@@ -69,8 +69,8 @@ ruun(uId, oId, rId).catch(e => console.error(`[example/producer] ${e.message}`, 
 
 });
 
-//node - topic comments    uId=userId, oId=objectId, sms=message
-const r = async (uId, oId, sms) => {
+//node - topic comments    uId=userId, oId=objectId, comment=message
+const r = async (uId, oId, comment) => {
 
   await producer.connect()
 //    await producer.send()
@@ -78,7 +78,7 @@ const r = async (uId, oId, sms) => {
     topic: 'comments',
     messages: [ 
   { 
-    'value': `{ "userId": "${uId}",  "objectId": "${oId}", "message": "${sms}"}`
+    'value': `{ "userId": "${uId}",  "objectId": "${oId}", "comment": "${comment}"}`
   } 
     ],
   })
@@ -88,11 +88,12 @@ const r = async (uId, oId, sms) => {
 app.get('/comments', (req, res, next) => {
 const uId = req.query.userId;
 const oId = req.query.objectId;
-const sms = req.query.message;
-res.send({'userId:': uId, 'objectId': oId,'message' : sms} );
-r(uId, oId, sms).catch(e => console.error(`[example/producer] ${e.message}`, e))
+const comment = req.query.comment;
+res.send({'userId:': uId, 'objectID': oId,'comment' : comment} );
+r(uId, oId, comment).catch(e => console.error(`[example/producer] ${e.message}`, e))
 
 });
+
 
 
 app.listen(port,  () => 
